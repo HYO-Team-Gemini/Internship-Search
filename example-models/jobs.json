@@ -1,0 +1,22 @@
+{
+    "num_jobs": 2,
+    "jobs": [
+        [
+            {
+                "name": "Software Engineer",
+                "location": [45.123, 47.232],
+                "employer": "Cisco",
+                "date": 20200405,
+                "link": "https://google.com"
+            },
+            {
+                "name": "Systems Architect",
+                "location": [70.123, 47.232],
+                "employer": "Cisco",
+                "date": 20200410,
+                "link": "https://google.com"
+            }
+        ]
+    ]
+}
+
