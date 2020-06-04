@@ -1,0 +1,12 @@
+name: hyo
+
+channels:
+- conda-forge
+- defaults
+- javascript
+
+dependencies:
+- python=3.8.3
+- flask
+- pymongo
+- beautifulsoup4
