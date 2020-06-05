@@ -10,3 +10,5 @@ dependencies:
 - flask
 - pymongo
 - beautifulsoup4
+- marshmallow
+- flask-restful
