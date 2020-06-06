@@ -1,17 +1,24 @@
 from flask import Flask
-from flask_restful import Api, Resource
+from flask_restful import Api, Resource, reqparse
 import json
+import job_searcher
 
 app = Flask(__name__)
 api = Api(app)
 
-jobs = json.load(open('example-models/jobs.json'))
+parser = reqparse.RequestParser()
+parser.add_argument('name', default='*', type=str)
+parser.add_argument('employer', default='*', type=str)
+parser.add_argument('post_age', default='*', type=int)
+parser.add_argument('distance', default='*', type=int)
 
 # JobList
 # shows a list of all jobs
 class JobList(Resource):
     def get(self):
-        return jobs
+        args = parser.parse_args()
+        output = job_searcher.search(args)
+        return output
 
 ##
 ## Actually setup the Api resource routing here
