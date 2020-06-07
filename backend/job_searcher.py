@@ -2,7 +2,7 @@ import marshmallow
 import json
 
 ##TODO: Read Data From MongoDB
-jobs = json.load(open('example-models/jobs.json'))['jobs']
+jobs = json.load(open('../example-models/jobs.json'))['jobs']
 
 def search(args: dict) -> dict:
     filtered_jobs = {}

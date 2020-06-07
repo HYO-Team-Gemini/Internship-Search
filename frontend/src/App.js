@@ -1,41 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import values from 'lodash/values';
 import JobPosting from './components/JobPosting.js';
 import './App.css';
 
 function App() {
-  const job = {
-    name: "Software Engineering Intern",
-    employer: "Exxon Mobil",
-    description: "Working as an intern for the summer of 2020",
-    date: 20200425,
-    link: "https://exxonmobil.com",
-  };
+  const [jobs, setJobs] = useState([]);
+  const url = "http://127.0.0.1:5000";
 
-  const jobsArray = {
-    "num_jobs": 12,
-    "jobs": [
-        {
-          "name": "Software Engineer",
-          "location": [45.123, 47.232],
-          "employer": "Cisco",
-          "date": 20200405,
-          "link": "https://google.com"
-        },
-        {
-          "name": "Systems Architect",
-          "location": [70.123, 47.232],
-          "employer": "Cisco",
-          "date": 20200410,
-          "link": "https://google.com"
-        },
-        job, job, job, job, job, job, job, job, job, job
-    ]
-  };
+  // React effect hook for getting all jobs - does not use any values from component scope
+  useEffect(() => {
+    const getData = () => {
+      axios.get(url + "/jobs").then(response => {
+        setJobs(values(response.data.jobs));
+      });
+    };
+    
+    getData();
+  }, []);
 
   return (
     <div className="App">
       <div className="jobs-grid">
-        {jobsArray.jobs.map((job, i) => <div className="col"><JobPosting key={i} job={job} /></div>)}
+        {jobs.map((job, i) => <div className="col"><JobPosting key={i} job={job} /></div>)}
       </div>
     </div>
   );
