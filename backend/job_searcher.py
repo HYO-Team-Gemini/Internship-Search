@@ -16,10 +16,10 @@ def search(args: dict) -> dict:
     filtered_jobs = list(db.jobs.find(query_args))
     jobs = {}
     for job in filtered_jobs:
-        job = json.loads(json_util.dumps(job))
+        job = sanitize_mongo_bson(job)
         jobs[str(len(jobs.keys()) + 1)] = job
     output = { "num_jobs": len(filtered_jobs), "jobs": jobs}
-    pprint('Queried for: ')
+    print('Queried for:')
     pprint(args)
     pprint(output)
     return output
@@ -33,3 +33,6 @@ def mongo_query_args(args: dict) -> dict:
                 "$options" :'i'
             }
     return query_args
+
+def sanitize_mongo_bson(inputMongo: dict) -> dict:
+    return json.loads(json_util.dumps(inputMongo))
