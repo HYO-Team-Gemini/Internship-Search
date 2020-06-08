@@ -187,3 +187,6 @@ dmypy.json
 # Pyre type checker
 
 # End of https://www.toptal.com/developers/gitignore/api/flask,python
+
+# Database Credentials
+/credentials.json
