@@ -1,11 +1,13 @@
-from lxml import html, etree
-import requests
-import re
-import os
-import sys
-import unicodecsv as csv
 import argparse
 import json
+import os
+import re
+import sys
+
+import requests
+import unicodecsv as csv
+from lxml import etree, html
+
 
 def parse(keyword, place):
 
