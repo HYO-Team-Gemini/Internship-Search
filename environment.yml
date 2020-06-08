@@ -13,3 +13,6 @@ dependencies:
 - marshmallow
 - flask-restful
 - flask-cors
+- requests
+- unicodecsv
+- lxml
