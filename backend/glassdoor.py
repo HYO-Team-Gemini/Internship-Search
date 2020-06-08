@@ -104,30 +104,3 @@ def parse(keyword, place):
 
 	except:
 		print("Failed to load locations")
-#From here on out, this is writing to a CSV file rather than just storing in an array. I don't think this is neccesary
-'''
-if __name__ == "__main__":
-
-	 eg-:python 1934_glassdoor.py "Android developer", "new york"
-
-	argparser = argparse.ArgumentParser()
-	argparser.add_argument('keyword', help='job name', type=str)
-	argparser.add_argument('place', help='job location', type=str)
-	args = argparser.parse_args()
-	keyword = args.keyword
-	place = args.place
-	print("Fetching job details")
-	scraped_data = parse(keyword, place)
-	print("Writing data to output file")
-
-	with open('%s-%s-job-results.csv' % (keyword, place), 'wb')as csvfile:
-		fieldnames = ['Name', 'Company', 'State',
-					  'City', 'Salary', 'Location', 'Url']
-		writer = csv.DictWriter(csvfile, fieldnames=fieldnames,quoting=csv.QUOTE_ALL)
-		writer.writeheader()
-		if scraped_data:
-			for data in scraped_data:
-				writer.writerow(data)
-		else:
-			print("Your search for %s, in %s does not match any jobs"%(keyword,place))
-            '''
