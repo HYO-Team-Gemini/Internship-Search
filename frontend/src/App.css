@@ -36,3 +36,15 @@
     flex-basis: 100%;
   }
 }
+
+.search-form {
+  padding: 1rem 1rem;
+}
+
+.form-label {
+  color: white;
+}
+
+.search-button {
+  bottom: 0;
+}
