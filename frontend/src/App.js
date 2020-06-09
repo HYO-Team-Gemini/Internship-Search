@@ -55,9 +55,11 @@ function App() {
         </Form>
       </Container>
       <Container fluid>
-        <div className="jobs-grid">
-          {jobs.map((job, i) => <div className="col"><JobPosting key={i} job={job} /></div>)}
-        </div>
+        { jobs.length > 0 &&
+          <div className="jobs-grid">
+            {jobs.map((job, i) => <div className="col"><JobPosting key={i} job={job} /></div>)}
+          </div>
+        }
       </Container>
     </div>
   );
