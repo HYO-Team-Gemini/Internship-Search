@@ -17,7 +17,10 @@ http = urllib3.PoolManager()
 def search(args: dict, remote_address: str) -> dict:
     results = []
     query_args = mongo_query_args(args, remote_address)
-    results = list(db.jobs.find(query_args))
+    print(query_args)
+    cursor = db.jobs.find(query_args)
+    cursor.skip((args["page"] - 1) * args["max_returns"]).limit(args["max_returns"])
+    results = list(cursor)
     jobs = {}
     for job in results:
         job = sanitize_mongo_bson(job)
@@ -47,19 +50,26 @@ def get_user_coordinates(ip: str) -> list:
     api_key = credentials["IPStack"]["Access Key"]
     api_address = f"http://api.ipstack.com/{ip}?access_key={api_key}"
     result = json.loads(http.request('GET', api_address).data)
-    return [result['latitude'], result['longitude']]
+    return [result['longitude'], result['latitude']]
 
 def build_location_query(args: dict, ip: str) -> dict:
-    return { 
-        '$near' : {
-            '$geometry': { 
-                'type': "Point",
-                'coordinates': get_user_coordinates(ip) 
-            },
-            '$minDistance': 0,
-            '$maxDistance': 1609.34 * args['distance']
+    return {
+        '$geoWithin': {
+            '$centerSphere': [
+                get_user_coordinates(ip), 
+                args['distance'] / 3963.2
+            ]
         }
     }
-    
 
-search({'distance': 5, 'max_returns': 50}, '73.245.3.190')
+## Testing Code
+if __name__ == '__main__':
+    db = client.test
+    pprint(search({
+        'distance': 0,
+        'max_returns': 50,
+        'page': 2,
+        'name': '*',
+        'employer': '*',
+        'post_age': 0
+    }, credentials["Personal"]["IP"]))
