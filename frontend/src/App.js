@@ -56,7 +56,7 @@ function App() {
 
   return (
     <div className="App">
-      <Container fluid>
+      <Container fluid className="search-bar">
         <Form className="search-form" onSubmit={handleSubmit}>
           <Form.Row>
             <Form.Group as={Col}>
@@ -79,14 +79,14 @@ function App() {
               <Form.Control type="number" value={distance} onChange={e => setDistance(e.target.value)}
                             placeholder="Example: 15 miles" />
             </Form.Group>
-            <Form.Group as={Col} xs="auto">
+            <Form.Group as={Col} xs="auto" className="d-flex flex-column justify-content-end">
               <Button type="submit" value="Submit">Search</Button>
             </Form.Group>
           </Form.Row>
         </Form>
       </Container>
-      <Container fluid>
-        { displayMessage && <Alert variant="secondary">{displayMessage}</Alert>}
+      <Container fluid className="job-results">
+        { displayMessage && <Alert variant="secondary" className="display-message">{displayMessage}</Alert>}
         { jobs.length > 0 &&
           <div className="jobs-grid">
             {jobs.map((job, i) => <div className="col"><JobPosting key={i} job={job} /></div>)}

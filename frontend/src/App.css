@@ -38,13 +38,9 @@
 }
 
 .search-form {
-  padding: 1rem 1rem;
+  padding: 1rem;
 }
 
 .form-label {
   color: white;
-}
-
-.search-button {
-  bottom: 0;
 }
