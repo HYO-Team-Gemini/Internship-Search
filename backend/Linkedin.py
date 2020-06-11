@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-import urllib3.request
+import urllib.request
 import json
 
 # takes 3 arguments: keywords (search term), zip code as location, and number of pages to parse (25 results per page)
@@ -19,7 +19,7 @@ def linkedin_scrape(keywords, zip_code = None, num_pages = 10):
     for page_number in range(0, num_pages):
         url = base_url + str(page_number)
 
-        html = urllib3.request.urlopen(url).read().decode("utf-8")
+        html = urllib.request.urlopen(url).read().decode("utf-8")
         soup = BeautifulSoup(html, features="html.parser")
 
         card_class = "job-result-card"
