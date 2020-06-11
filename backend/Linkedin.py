@@ -1,7 +1,12 @@
 from bs4 import BeautifulSoup
+<<<<<<< HEAD
 import urllib.request
+=======
+import urllib3
+>>>>>>> abaf703ce858c169c68cbf487d387acdf60e3f93
 import json
 
+http = urllib3.PoolManager()
 # takes 3 arguments: keywords (search term), zip code as location, and number of pages to parse (25 results per page)
 # optional LinkedIn jobs API: https://developer.linkedin.com/docs/v1/jobs/job-search-api
 def linkedin_scrape(keywords, zip_code = None, num_pages = 10):
@@ -19,7 +24,11 @@ def linkedin_scrape(keywords, zip_code = None, num_pages = 10):
     for page_number in range(0, num_pages):
         url = base_url + str(page_number)
 
+<<<<<<< HEAD
         html = urllib.request.urlopen(url).read().decode("utf-8")
+=======
+        html = http.urlopen('GET', url).data.decode("utf-8") 
+>>>>>>> abaf703ce858c169c68cbf487d387acdf60e3f93
         soup = BeautifulSoup(html, features="html.parser")
 
         card_class = "job-result-card"
@@ -73,3 +82,4 @@ def linkedin_scrape(keywords, zip_code = None, num_pages = 10):
     #Not using Json in this context to keep it consistent with glassdoor.py
     return jobs;
     #Jobs Fields: Url, Name, Company, Location, Salary, Misc, easy_apply
+print(linkedin_scrape('software', 33480, 10))
