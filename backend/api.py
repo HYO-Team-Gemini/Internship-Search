@@ -7,12 +7,10 @@ import job_searcher
 app = Flask(__name__)
 CORS(app)
 api = Api(app)
-app.run(host='0.0.0.0')
 
 parser = reqparse.RequestParser()
 parser.add_argument('name', default='*', type=str)
 parser.add_argument('employer', default='*', type=str)
-parser.add_argument('post_age', default='*', type=int)
 parser.add_argument('distance', default=0, type=int)
 parser.add_argument('include_remote', default=True, type=bool)
 parser.add_argument('page', default=1, type=int)
