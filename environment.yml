@@ -13,3 +13,4 @@ dependencies:
 - marshmallow
 - flask-restful
 - flask-cors
+- waitress
