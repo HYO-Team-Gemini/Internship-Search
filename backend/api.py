@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_restful import Api, Resource, reqparse
 from flask_cors import CORS
 import json
@@ -11,15 +11,19 @@ api = Api(app)
 parser = reqparse.RequestParser()
 parser.add_argument('name', default='*', type=str)
 parser.add_argument('employer', default='*', type=str)
-parser.add_argument('post_age', default='*', type=int)
-parser.add_argument('distance', default='*', type=int)
+parser.add_argument('distance', default=0, type=int)
+parser.add_argument('include_remote', default=True, type=bool)
+parser.add_argument('page', default=1, type=int)
+parser.add_argument('max_returns', default=50, type=int)
 
 # JobList
 # shows a list of all jobs
 class JobList(Resource):
     def get(self):
         args = parser.parse_args()
-        output = job_searcher.search(args)
+        user_ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+        print(user_ip)
+        output = job_searcher.search(args, user_ip)
         return output
 
 ##
