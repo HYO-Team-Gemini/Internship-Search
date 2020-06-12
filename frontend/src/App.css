@@ -36,3 +36,11 @@
     flex-basis: 100%;
   }
 }
+
+.search-form {
+  padding: 1rem;
+}
+
+.form-label {
+  color: white;
+}
