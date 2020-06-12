@@ -19,7 +19,8 @@ def search(args: dict, remote_address: str) -> dict:
     query_args = mongo_query_args(args, remote_address)
     print(query_args)
     cursor = db.jobs.find(query_args)
-    cursor.skip((args["page"] - 1) * args["max_returns"]).limit(args["max_returns"])
+    cursor.skip((args["page"] - 1) * args["max_returns"]).limit(args["max_returns"]).sort('date', pymongo.DESCENDING)
+
     results = list(cursor)
     jobs = {}
     for job in results:
@@ -68,8 +69,7 @@ if __name__ == '__main__':
     pprint(search({
         'distance': 0,
         'max_returns': 50,
-        'page': 2,
-        'name': '*',
-        'employer': '*',
-        'post_age': 0
+        'page': 1,
+        'name': 'UI',
+        'employer': 'goog'
     }, credentials["Personal"]["IP"]))
