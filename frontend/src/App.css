@@ -3,6 +3,14 @@
   min-height: 100vh;
 }
 
+.job-results {
+  padding-top: 1rem;
+  padding-bottom: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .jobs-grid {
   display: flex;
   align-items: center;
@@ -43,4 +51,8 @@
 
 .form-label {
   color: white;
+}
+
+.pages-element {
+  margin: 1rem 0rem;
 }

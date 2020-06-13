@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import values from 'lodash/values';
 import JobPosting from './components/JobPosting.js';
-import { Container, Col, Form, Button, Alert } from 'react-bootstrap';
+import { Container, Col, Form, Button, Alert, Pagination } from 'react-bootstrap';
 import './App.css';
 
 function App() {
@@ -12,19 +12,17 @@ function App() {
   const [postAge, setPostAge] = useState("");
   const [distance, setDistance] = useState("");
   const [displayMessage, setDisplayMessage] = useState("");
+  const [currentPage, setCurrentPage] = useState(0);
 
-  const url = "http://127.0.0.1:5000";
+  let pages = [];
+  let active = 1;
+  for (let i = 1; i <= 5; i++) {
+    pages.push(
+      <Pagination.Item key={i} active={i === active}>{i}</Pagination.Item>
+    );
+  }
 
-  // React effect hook for getting all jobs - does not use any values from component scope
-  // useEffect(() => {
-  //   const getData = () => {
-  //     axios.get(url + "/jobs").then(response => {
-  //       setJobs(values(response.data.jobs));
-  //     });
-  //   };
-
-  //   getData();
-  // }, []);
+  const url = "https://gemini-jobs.herokuapp.com";
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -45,10 +43,12 @@ function App() {
           setDisplayMessage("");
         }
         else {
+          setJobs([]);
           setDisplayMessage("No Results Found");
         }
       })
       .catch(error => {
+        setJobs([]);
         console.log(error);
         setDisplayMessage("Error Retrieving Results")
       });
@@ -88,9 +88,18 @@ function App() {
       <Container fluid className="job-results">
         { displayMessage && <Alert variant="secondary" className="display-message">{displayMessage}</Alert>}
         { jobs.length > 0 &&
-          <div className="jobs-grid">
-            {jobs.map((job, i) => <div className="col"><JobPosting key={i} job={job} /></div>)}
-          </div>
+            <div className="jobs-grid">
+              {jobs.map((job, i) => <div className="col"><JobPosting key={i} job={job} /></div>)}
+            </div>
+        }
+        { jobs.length > 0 &&
+            <Pagination className="pages-element">
+              <Pagination.First />
+              <Pagination.Prev />
+              {pages}
+              <Pagination.Next />
+              <Pagination.Last />
+            </Pagination>
         }
       </Container>
     </div>
