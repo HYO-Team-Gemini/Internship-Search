@@ -13,6 +13,9 @@ dependencies:
 - marshmallow
 - flask-restful
 - flask-cors
+- waitress
+- urllib3
+- dnspython
 - requests
 - unicodecsv
 - lxml
