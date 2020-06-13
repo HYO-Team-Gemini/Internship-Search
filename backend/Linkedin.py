@@ -65,12 +65,5 @@ def linkedin_scrape(keywords, zip_code = None, num_pages = 10):
                 dic["Misc"]["easy_apply"] = True
 
             jobs.append(dic)
-
-
-    obj = { "num_jobs": len(jobs), "jobs": jobs }
-
-    with open('linkedin_data.json', 'w', encoding='utf-8') as f:
-        json.dump(obj, f, ensure_ascii=False, indent=4)
-    #Not using Json in this context to keep it consistent with glassdoor.py
-    return jobs;
+    return jobs
     #Jobs Fields: Url, Name, Company, Location, Salary, Misc, easy_apply
