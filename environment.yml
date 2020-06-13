@@ -16,3 +16,6 @@ dependencies:
 - waitress
 - urllib3
 - dnspython
+- requests
+- unicodecsv
+- lxml
