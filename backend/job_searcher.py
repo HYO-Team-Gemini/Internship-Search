@@ -10,7 +10,7 @@ credentials = json.load(open('backend/credentials.json'))
 username = credentials['MongoDB']['Username']
 password = credentials['MongoDB']['Password']
 client = pymongo.MongoClient(f"mongodb+srv://{username}:{password}@ekko-test-qbczn.mongodb.net/jobs?retryWrites=true&w=majority")
-db = client.jobs
+db = client.test
 
 http = urllib3.PoolManager()
 
