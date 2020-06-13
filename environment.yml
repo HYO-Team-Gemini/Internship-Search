@@ -14,3 +14,5 @@ dependencies:
 - flask-restful
 - flask-cors
 - waitress
+- urllib3
+- dnspython
