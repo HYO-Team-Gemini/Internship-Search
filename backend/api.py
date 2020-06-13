@@ -2,7 +2,7 @@ from flask import Flask, request
 from flask_restful import Api, Resource, reqparse
 from flask_cors import CORS
 import json
-import job_searcher
+from backend import job_searcher
 
 app = Flask(__name__)
 CORS(app)
