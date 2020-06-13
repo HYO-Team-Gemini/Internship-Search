@@ -1,7 +1,9 @@
 @@ -0,0 +1,75 @@
-from bs4 import BeautifulSoup
-import urllib.request
 import json
+import urllib.request
+
+from bs4 import BeautifulSoup
+
 
 # takes 3 arguments: keywords (search term), zip code as location, and number of pages to parse (25 results per page)
 # optional LinkedIn jobs API: https://developer.linkedin.com/docs/v1/jobs/job-search-api
