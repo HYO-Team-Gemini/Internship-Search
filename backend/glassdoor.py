@@ -10,7 +10,7 @@ import unicodecsv as csv
 from lxml import etree, html
 
 
-def scrape(keyword, place):
+def scrape(keyword: str = 'job', place: str = 'us'):
 
 	headers = {	'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
 				'accept-encoding': 'gzip, deflate, sdch, br',
@@ -38,7 +38,6 @@ def scrape(keyword, place):
 	location_url = "https://www.glassdoor.co.in/findPopularLocationAjax.htm?"
 	try:
 		# Getting location id for search location
-		print("Fetching location details")
 		location_response = requests.post(location_url, headers=location_headers, data=data).json()
 		place_id = location_response[0]['locationId']
 		job_litsting_url = 'https://www.glassdoor.com/Job/jobs.htm'
@@ -105,5 +104,6 @@ def scrape(keyword, place):
 
 	except:
 		print("Failed to load locations")
+
 if __name__ == "__main__":
-	print(scrape('software', '33480'))
+	print(scrape())
