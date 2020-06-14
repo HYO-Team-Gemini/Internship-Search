@@ -26,10 +26,13 @@ def search(args: dict, remote_address: str) -> dict:
     for job in results:
         job = sanitize_mongo_bson(job)
         jobs[str(len(jobs.keys()) + 1)] = job
-    output = { "num_jobs": len(results), "jobs": jobs}
+    output = { 
+        "num_jobs": len(results), 
+        "jobs": jobs, 
+        "num_pages": int(cursor.count() / args["max_returns"]) + 1
+    }
     print('Queried for:')
     pprint(args)
-    pprint(output)
     return output
 
 def mongo_query_args(args: dict, ip: str) -> dict:
@@ -70,6 +73,6 @@ if __name__ == '__main__':
         'distance': 0,
         'max_returns': 50,
         'page': 1,
-        'name': 'UI',
-        'employer': 'goog'
+        'name': '*',
+        'employer': '*'
     }, credentials["Personal"]["IP"]))
