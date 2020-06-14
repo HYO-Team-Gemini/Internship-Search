@@ -1,7 +1,6 @@
 import json
 from pprint import pprint
 
-import geopy
 import pymongo
 from uszipcode import SearchEngine, Zipcode
 
