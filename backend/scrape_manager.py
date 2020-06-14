@@ -4,7 +4,10 @@ from pprint import pprint
 import pymongo
 from uszipcode import SearchEngine, Zipcode
 
-from backend import extras, glassdoor, linkedin
+if __name__ == "__main__":
+    import extras, glassdoor, linkedin
+else:
+    from backend import extras, glassdoor, linkedin
 
 credentials = json.load(open('backend/credentials.json'))
 username = credentials['MongoDB']['Username']
@@ -108,4 +111,5 @@ def perform_queries(queries: list, skip_insert: bool = False):
     for query in queries:
         perform_query(query, skip_insert)
 
-perform_query({'name': 'programmer', 'zipcode': '33480'})
+if __name__ == "__main__":
+    perform_query({'name': 'programmer', 'zipcode': '33480'})
