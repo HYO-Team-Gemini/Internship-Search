@@ -1,6 +1,7 @@
 import datetime
 import json
 import urllib.request
+from pprint import pprint
 
 from bs4 import BeautifulSoup
 
@@ -32,45 +33,51 @@ def scrape(keywords, zip_code = None, num_pages = 10):
         jobs_content = [card.contents for card in cards]
 
         for job_content in jobs_content:
-            if (len(job_content) == 0): continue
+            try:
+                if (len(job_content) == 0): continue
 
-            link_tag = job_content[0]
-            info_tag = job_content[2]
+                link_tag = job_content[0]
+                info_tag = job_content[2]
 
-            dic = {}
-            dic["link"] = link_tag.get("href")
+                dic = {}
+                full_link = str(link_tag.get("href"))
+                no_tracking_link = full_link.split('?')[0]
+                dic["link"] = no_tracking_link
 
-            name_tag, company_tag, metadata_tag = info_tag.contents
+                name_tag, company_tag, metadata_tag = info_tag.contents
 
-            # get unique fields
-            # unique_fields = set()
-            # for md in metadata_tag.contents:
-            #     field = md.get("class")[0][17:]
-            #     unique_fields.add(field)
+                # get unique fields
+                # unique_fields = set()
+                # for md in metadata_tag.contents:
+                #     field = md.get("class")[0][17:]
+                #     unique_fields.add(field)
 
-            dic["name"] = name_tag.string
-            dic["employer"] = company_tag.string
+                dic["name"] = name_tag.string
+                dic["employer"] = company_tag.string
 
-            locations = metadata_tag.find_all(attrs={"class": card_prefix + "location"})[0].string.split(', ')
-            dic["city"] = locations[0]
-            dic["state"] = locations[1]
+                locations = metadata_tag.find_all(attrs={"class": card_prefix + "location"})[0].string.split(', ')
+                dic["city"] = locations[0]
+                dic["state"] = locations[1]
 
-            salary_info = metadata_tag.find_all(attrs={"class": card_prefix + "salary-info"})
-            if len(salary_info) == 1:
-                dic["salary"] = salary_info[0].string
+                salary_info = metadata_tag.find_all(attrs={"class": card_prefix + "salary-info"})
+                if len(salary_info) == 1:
+                    dic["salary"] = salary_info[0].string
 
-            time = metadata_tag.find_all('time')[0]
-            #dic["date"] = time.get("datetime")
-            #dic["ago"] = time.string
+                time = metadata_tag.find_all('time')[0]
+                #dic["date"] = time.get("datetime")
+                #dic["ago"] = time.string
 
-            dic["misc"] = {}
-            easy_apply = metadata_tag.find_all(attrs={"class": card_prefix + "easy-apply-label"})
-            if len(easy_apply) == 1:
-                dic["misc"]["easy_apply"] = True
-            dic['date'] = datetime.datetime.utcnow()
+                dic["misc"] = {}
+                easy_apply = metadata_tag.find_all(attrs={"class": card_prefix + "easy-apply-label"})
+                if len(easy_apply) == 1:
+                    dic["misc"]["easy_apply"] = True
+                dic['date'] = datetime.datetime.utcnow()
 
-            jobs.append(dic)
+                jobs.append(dic)
+            except: 
+                print("Error With Job")
+                pprint(job_content)
     return jobs
 
 if __name__ == "__main__":
-    print(scrape('software', '33480', num_pages=1))
+    print(scrape('software', num_pages=1))
