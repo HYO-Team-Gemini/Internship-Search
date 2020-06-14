@@ -190,3 +190,6 @@ dmypy.json
 
 # Database Credentials
 /credentials.json
+
+# Temporary Files
+/tmp
