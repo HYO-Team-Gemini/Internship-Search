@@ -12,9 +12,11 @@ parser = reqparse.RequestParser()
 parser.add_argument('name', default='*', type=str)
 parser.add_argument('employer', default='*', type=str)
 parser.add_argument('distance', default=0, type=int)
-parser.add_argument('include_remote', default=True, type=bool)
 parser.add_argument('page', default=1, type=int)
 parser.add_argument('max_returns', default=50, type=int)
+parser.add_argument('zipcode', default='*', type=int)
+parser.add_argument('city', default='*', type=str)
+parser.add_argument('state', default='*', type=str)
 
 # JobList
 # shows a list of all jobs
