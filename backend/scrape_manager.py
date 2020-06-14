@@ -22,7 +22,8 @@ def scrape_for_jobs(name: str, coordinates: list) -> list:
 def scrape_for_jobs(name: str, zipcode: str) -> list:
     jobs = []
     jobs.extend(linkedin.scrape(name, zipcode))
-    jobs.extend(glassdoor.scrape(name, zipcode))
+    ## Until Glassdoor Links Are Fixed Don't Use Glassdoor for data
+    ##jobs.extend(glassdoor.scrape(name, zipcode))
     return jobs
 
 def prune_jobs(jobs: list) -> list:
