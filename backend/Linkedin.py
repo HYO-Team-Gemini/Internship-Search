@@ -1,3 +1,4 @@
+import datetime
 import json
 import urllib.request
 
@@ -6,7 +7,7 @@ from bs4 import BeautifulSoup
 
 # takes 3 arguments: keywords (search term), zip code as location, and number of pages to parse (25 results per page)
 # optional LinkedIn jobs API: https://developer.linkedin.com/docs/v1/jobs/job-search-api
-def linkedin_scrape(keywords, zip_code = None, num_pages = 10):
+def scrape(keywords, zip_code = None, num_pages = 10):
     # build query
     query = "keywords=" + "%20".join(str.split(keywords))
     if zip_code:
@@ -37,7 +38,7 @@ def linkedin_scrape(keywords, zip_code = None, num_pages = 10):
             info_tag = job_content[2]
 
             dic = {}
-            dic["Url"] = link_tag.get("href")
+            dic["link"] = link_tag.get("href")
 
             name_tag, company_tag, metadata_tag = info_tag.contents
 
@@ -47,24 +48,29 @@ def linkedin_scrape(keywords, zip_code = None, num_pages = 10):
             #     field = md.get("class")[0][17:]
             #     unique_fields.add(field)
 
-            dic["Name"] = name_tag.string
-            dic["Company"] = company_tag.string
+            dic["name"] = name_tag.string
+            dic["employer"] = company_tag.string
 
-            dic["Location"] = metadata_tag.find_all(attrs={"class": card_prefix + "location"})[0].string
+            locations = metadata_tag.find_all(attrs={"class": card_prefix + "location"})[0].string.split(', ')
+            dic["city"] = locations[0]
+            dic["state"] = locations[1]
 
             salary_info = metadata_tag.find_all(attrs={"class": card_prefix + "salary-info"})
             if len(salary_info) == 1:
-                dic["Salary"] = salary_info[0].string
+                dic["salary"] = salary_info[0].string
 
             time = metadata_tag.find_all('time')[0]
             #dic["date"] = time.get("datetime")
             #dic["ago"] = time.string
 
-            dic["Misc"] = {}
+            dic["misc"] = {}
             easy_apply = metadata_tag.find_all(attrs={"class": card_prefix + "easy-apply-label"})
             if len(easy_apply) == 1:
-                dic["Misc"]["easy_apply"] = True
+                dic["misc"]["easy_apply"] = True
+            dic['date'] = datetime.datetime.utcnow()
 
             jobs.append(dic)
     return jobs
-    #Jobs Fields: Url, Name, Company, Location, Salary, Misc, easy_apply
+
+if __name__ == "__main__":
+    print(scrape('software', '33480', num_pages=1))
