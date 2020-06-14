@@ -4,9 +4,7 @@ from pprint import pprint
 import pymongo
 from uszipcode import SearchEngine, Zipcode
 
-import extras
-import glassdoor
-import linkedin
+from backend import extras, glassdoor, linkedin
 
 credentials = json.load(open('backend/credentials.json'))
 username = credentials['MongoDB']['Username']
