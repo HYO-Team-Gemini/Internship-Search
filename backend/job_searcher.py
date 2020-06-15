@@ -77,6 +77,11 @@ def mongo_query_args(args: dict) -> dict:
     return query_args
 
 def sanitize_mongo_bson(inputMongo: dict) -> dict:
+    for key in inputMongo.keys():
+        item = inputMongo[key]
+        if hasattr(item, 'isoformat'):
+            inputMongo[key] = item.isoformat()
+    
     return json.loads(json_util.dumps(inputMongo))
 
 def build_location_query(args: dict) -> dict:
