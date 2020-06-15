@@ -14,6 +14,7 @@ username = credentials['MongoDB']['Username']
 password = credentials['MongoDB']['Password']
 client = pymongo.MongoClient(f"mongodb+srv://{username}:{password}@ekko-test-qbczn.mongodb.net/jobs?retryWrites=true&w=majority")
 db = client.jobs
+
 search = SearchEngine(db_file_dir="backend/tmp")
 
 def scrape_for_jobs(name: str, coordinates: list) -> list:
@@ -24,7 +25,10 @@ def scrape_for_jobs(name: str, coordinates: list) -> list:
 
 def scrape_for_jobs(name: str, zipcode: str) -> list:
     jobs = []
-    jobs.extend(linkedin.scrape(name, zipcode))
+    try:
+        jobs.extend(linkedin.scrape(name, zipcode))
+    except:
+        pass
     ## Until Glassdoor Links Are Fixed Don't Use Glassdoor for data
     ##jobs.extend(glassdoor.scrape(name, zipcode))
     return jobs
@@ -98,12 +102,16 @@ def refresh_job_data(num_queries: int = 20):
     queries.append(list(db.queries.find({}).sort('date', pymongo.ASCENDING).limit(num_queries - queries.count)))
 
 def perform_query(query: dict, skip_insert: bool = False) -> list:
+    search_engine = SearchEngine(db_file_dir="backend/tmp")
+
     name = query['name']
     zipcode = query['zipcode']
     jobs = scrape_for_jobs(name, zipcode)
-    jobs = prune_jobs(jobs)
-    jobs = prep_jobs(jobs)
-    if not skip_insert:
+    if len(jobs) > 0:
+        jobs = prune_jobs(jobs)
+    if len(jobs) > 0:
+        jobs = prep_jobs(jobs)
+    if not skip_insert and len(jobs) > 0:
         insert_jobs(jobs)
     return jobs
 
