@@ -1,4 +1,5 @@
 import argparse
+import datetime
 import json
 import os
 import re
@@ -9,7 +10,7 @@ import unicodecsv as csv
 from lxml import etree, html
 
 
-def parse(keyword, place):
+def scrape(keyword: str = 'job', place: str = 'us'):
 
 	headers = {	'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
 				'accept-encoding': 'gzip, deflate, sdch, br',
@@ -37,7 +38,6 @@ def parse(keyword, place):
 	location_url = "https://www.glassdoor.co.in/findPopularLocationAjax.htm?"
 	try:
 		# Getting location id for search location
-		print("Fetching location details")
 		location_response = requests.post(location_url, headers=location_headers, data=data).json()
 		place_id = location_response[0]['locationId']
 		job_litsting_url = 'https://www.glassdoor.com/Job/jobs.htm'
@@ -88,13 +88,13 @@ def parse(keyword, place):
 				job_url = raw_job_url[0] if raw_job_url else None
 
 				jobs = {
-					"Name": job_name,
-					"Company": company,
-					"State": state,
-					"City": city,
-					"Salary": salary,
-					"Location": job_location,
-					"Url": job_url
+					"name": job_name,
+					"employer": company,
+					"state": state,
+					"city": city,
+					"salary": salary,
+					"link": job_url,
+					"date": datetime.datetime.utcnow()
 				}
 				job_listings.append(jobs)
 
@@ -104,3 +104,6 @@ def parse(keyword, place):
 
 	except:
 		print("Failed to load locations")
+
+if __name__ == "__main__":
+	print(scrape())

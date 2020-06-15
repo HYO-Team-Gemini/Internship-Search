@@ -19,3 +19,5 @@ dependencies:
 - requests
 - unicodecsv
 - lxml
+- pip:
+  - uszipcode
