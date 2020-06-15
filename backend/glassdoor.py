@@ -4,7 +4,10 @@ import json
 import os
 import re
 import sys
+import urllib.request
+from pprint import pprint
 
+from bs4 import BeautifulSoup
 import requests
 import unicodecsv as csv
 from lxml import etree, html
@@ -71,6 +74,7 @@ def scrape(keyword: str = 'job', place: str = 'us'):
 			for job in listings:
 				raw_job_name = job.xpath(XPATH_NAME)
 				raw_job_url = job.xpath(XPATH_JOB_URL)
+				raw_job_url = job.xpath(raw_job_url)
 				raw_lob_loc = job.xpath(XPATH_LOC)
 				raw_company = job.xpath(XPATH_COMPANY)
 				raw_salary = job.xpath(XPATH_SALARY)
