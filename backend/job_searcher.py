@@ -16,7 +16,7 @@ http = urllib3.PoolManager()
 
 def search(args: dict, remote_address: str) -> dict:
     results = []
-    query_args = mongo_query_args(args, remote_address)
+    query_args = mongo_query_args(args)
     print(query_args)
     cursor = db.jobs.find(query_args)
     cursor.skip((args["page"] - 1) * args["max_returns"]).limit(args["max_returns"]).sort('date', pymongo.DESCENDING)
@@ -35,7 +35,7 @@ def search(args: dict, remote_address: str) -> dict:
     pprint(args)
     return output
 
-def mongo_query_args(args: dict, ip: str) -> dict:
+def check_for_arg_issues(args: dict):
     query_args = {}
     for key in args.keys():
         if args[key] != '*' and (key == 'name' or key == 'employer'):
@@ -50,29 +50,26 @@ def mongo_query_args(args: dict, ip: str) -> dict:
 def sanitize_mongo_bson(inputMongo: dict) -> dict:
     return json.loads(json_util.dumps(inputMongo))
 
-def get_user_coordinates(ip: str) -> list:
-    api_key = credentials["IPStack"]["Access Key"]
-    api_address = f"http://api.ipstack.com/{ip}?access_key={api_key}"
-    result = json.loads(http.request('GET', api_address).data)
-    return [result['longitude'], result['latitude']]
 
 def build_location_query(args: dict, ip: str) -> dict:
     return {
         '$geoWithin': {
             '$centerSphere': [
-                get_user_coordinates(ip), 
                 args['distance'] / 3963.2
             ]
+                    args['coordinates'], 
         }
     }
 
 ## Testing Code
 if __name__ == '__main__':
-    db = client.test
     pprint(search({
-        'distance': 0,
+        'distance': 50,
         'max_returns': 50,
         'page': 1,
         'name': '*',
-        'employer': '*'
-    }, credentials["Personal"]["IP"]))
+        'employer': '*',
+        'zipcode': 0,
+        'city': 'dallas',
+        'state': 'texas'
+    }))
