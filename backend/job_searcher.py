@@ -8,6 +8,11 @@ from bson import json_util
 from flask_restful import HTTPException
 from uszipcode import SearchEngine, Zipcode
 
+if __name__ == "__main__":
+    import scrape_manager
+else:
+    from backend import scrape_manager
+
 credentials = json.load(open('backend/credentials.json'))
 username = credentials['MongoDB']['Username']
 password = credentials['MongoDB']['Password']
@@ -34,6 +39,16 @@ def search(args: dict) -> dict:
     for job in results:
         job = sanitize_mongo_bson(job)
         jobs[str(len(jobs.keys()) + 1)] = job
+    if len(results) == 0 and args['page'] == 1 and args['zipcode'] != 0:
+        results = scrape_manager.perform_query(args)
+        cursor = db.jobs.find(query_args)
+        cursor.skip((args["page"] - 1) * args["max_returns"]).limit(args["max_returns"]).sort('date', pymongo.DESCENDING)
+        results = list(cursor)
+        jobs = {}
+        for job in results:
+            job = sanitize_mongo_bson(job)
+            jobs[str(len(jobs.keys()) + 1)] = job
+
     output = { 
         "num_jobs": len(results), 
         "jobs": jobs, 
