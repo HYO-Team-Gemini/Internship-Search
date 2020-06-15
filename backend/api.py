@@ -1,12 +1,18 @@
-from flask import Flask, request
-from flask_restful import Api, Resource, reqparse
-from flask_cors import CORS
 import json
-from backend import job_searcher
+import traceback
+
+from flask import Flask, request
+from flask_cors import CORS
+from flask_restful import Api, HTTPException, Resource, abort, reqparse
+
+if __name__ == "__main__":
+    import job_searcher
+else:
+    from backend import job_searcher
 
 app = Flask(__name__)
 CORS(app)
-api = Api(app)
+api = Api(app, catch_all_404s=True)
 
 parser = reqparse.RequestParser()
 parser.add_argument('name', default='*', type=str)
@@ -23,12 +29,12 @@ parser.add_argument('state', default='*', type=str)
 class JobList(Resource):
     def get(self):
         args = parser.parse_args()
-        user_ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
         try:
-            output = job_searcher.search(args, user_ip)
-        except:
-            output = {'message': 'Error Occurred Somewhere'}
-        return output
+            return job_searcher.search(args), 200
+        except HTTPException as e:
+            abort(e.code, message=e.description)
+        except Exception as e:
+            return {'message': 'Error Occurred', 'error': str(e)}
 
 ##
 ## Actually setup the Api resource routing here
