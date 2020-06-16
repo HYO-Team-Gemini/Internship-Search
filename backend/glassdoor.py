@@ -139,7 +139,9 @@ def scrape(keyword: str = 'job', place: str = 'us') -> list:
 			"employer": company,
 			"state": state,
 			"city": city,
-			"salary": salary,
+			"misc": {
+				"salary": salary
+			},
 			"link": job_url,
 			"date": datetime.datetime.utcnow()
 		}
