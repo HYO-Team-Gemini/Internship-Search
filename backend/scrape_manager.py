@@ -26,8 +26,7 @@ def scrape_for_jobs(name: str, coordinates: list) -> list:
 def scrape_for_jobs(name: str, zipcode: str) -> list:
     jobs = []
     try:
-        ##jobs.extend(linkedin.scrape(name, zipcode))
-        pass
+        jobs.extend(linkedin.scrape(name, zipcode))
     except:
         pass
     try:
