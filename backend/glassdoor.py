@@ -131,6 +131,9 @@ def scrape(keyword: str = 'job', place: str = 'us') -> list:
 		salary = ''.join(raw_salary).strip()
 		job_url = raw_job_url[0] if raw_job_url else None
 
+		job_url = requests.get(job_url, headers= headers, allow_redirects=True).url
+		job_url = job_url.split('&ctt=')[0]
+
 		job_cleaned = {
 			"name": job_name,
 			"employer": company,
@@ -146,4 +149,4 @@ def scrape(keyword: str = 'job', place: str = 'us') -> list:
 	return job_listings
 
 if __name__ == "__main__":
-	pprint(scrape())
+	pprint(scrape('software', '33480'))
