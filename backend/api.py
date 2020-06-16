@@ -34,7 +34,7 @@ class JobList(Resource):
         except HTTPException as e:
             abort(e.code, message=e.description)
         except Exception as e:
-            return {'message': 'Error Occurred', 'error': str(e)}
+            abort(500, message=f"Unexpected Server Error Occurred: {str(e)}")
 
 ##
 ## Actually setup the Api resource routing here
