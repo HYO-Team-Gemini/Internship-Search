@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from pprint import pprint
 
 import marshmallow
@@ -16,14 +17,15 @@ else:
 credentials = json.load(open('backend/credentials.json'))
 username = credentials['MongoDB']['Username']
 password = credentials['MongoDB']['Password']
-client = pymongo.MongoClient(f"mongodb+srv://{username}:{password}@ekko-test-qbczn.mongodb.net/jobs?retryWrites=true&w=majority")
-db = client.jobs
 
 search_engine = SearchEngine(db_file_dir="backend/tmp")
 
 http = urllib3.PoolManager()
 
 def search(args: dict) -> dict:
+    client = pymongo.MongoClient(f"mongodb+srv://{username}:{password}@ekko-test-qbczn.mongodb.net/jobs?retryWrites=true&w=majority")
+    db = client.jobs
+
     search_engine = SearchEngine(db_file_dir="backend/tmp")
 
     results = []
@@ -56,6 +58,13 @@ def search(args: dict) -> dict:
     }
     print('Queried for:')
     pprint(args)
+    args['date'] = datetime.utcnow()
+    remove_keys = [key for key in args.keys() if args[key] == '*']
+    for key in remove_keys:
+        args.pop(key)
+            
+    db.queries.insert_one(args)
+    client.close()
     return output
 
 def check_for_arg_issues(args: dict):
