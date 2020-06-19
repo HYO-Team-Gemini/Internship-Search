@@ -15,22 +15,21 @@ function App() {
   const [currentPage, setCurrentPage] = useState(0);
 
   let pages = [];
-  let active = 1;
   for (let i = 1; i <= 5; i++) {
     pages.push(
-      <Pagination.Item key={i} active={i === active}>{i}</Pagination.Item>
+      <Pagination.Item key={i} active={ currentPage === i } onClick={() => getPage(i)}>{i}</Pagination.Item>
     );
   }
 
   const url = "https://gemini-jobs.herokuapp.com";
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const getData = (pageNumber) => {
     const query = {
       name: name.toLowerCase(),
       employer: employer.toLowerCase(),
       post_age: postAge ? postAge : 0,
-      distance: distance ? distance : 0
+      distance: distance ? distance : 0,
+      page: pageNumber
     };
 
     console.log(query);
@@ -52,6 +51,17 @@ function App() {
         console.log(error);
         setDisplayMessage("Error Retrieving Results")
       });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const pageNumber = 1;
+    getData(pageNumber);
+  };
+
+  const getPage = (pageNumber) => {
+    getData(pageNumber);
+    setCurrentPage(pageNumber);
   };
 
   return (

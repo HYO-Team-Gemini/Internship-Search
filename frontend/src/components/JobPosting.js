@@ -6,10 +6,9 @@ import './JobPosting.css';
 
 const JobPosting = (props) => {
     const job = props.job;
-    // const date = moment(job.date.toString()).fromNow();
-    const date = moment(job.date.$date.toString(), "x").format("M/D/YY");
-    let location = job.location.city ? job.location.city : "";
-    location += job.location.country ? ", " + job.location.country : "";
+    const daysAgo = moment(job.date.toString()).fromNow();
+    const date = moment(job.date).format("M/D/YY");
+    const location = job.city ? job.city : "" + job.state ? ", " + job.state : "";
 
     return (
         <Card className="job-posting">
@@ -23,13 +22,12 @@ const JobPosting = (props) => {
                     </div>
                 </Card.Title>
                 <Card.Subtitle className="mb-2 text-muted">{job.employer}</Card.Subtitle>
-                <Card.Text>{location ? location : ""}</Card.Text>
-                <Card.Link href={job.link}>Link</Card.Link>
+                <Card.Text>{location ? "Location: " + location : ""}</Card.Text>
+                <Card.Text>Published: {daysAgo}</Card.Text>
+                <Card.Link target="_blank" href={job.link}>Link</Card.Link>
             </Card.Body>
         </Card>
     );
 }
-
-// <Card.Text>{job.description ? job.description : "No Description"}</Card.Text>
 
 export default JobPosting;
