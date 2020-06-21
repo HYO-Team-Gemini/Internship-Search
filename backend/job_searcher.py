@@ -5,7 +5,7 @@ from pprint import pprint
 import marshmallow
 import pymongo
 import urllib3
-from bson import json_util
+from bson import json_util, objectid
 from flask_restful import HTTPException
 from uszipcode import SearchEngine, Zipcode
 
@@ -118,9 +118,23 @@ def fill_missing_arguments(args: dict) -> dict:
         location = [zipcode.lng, zipcode.lat]
         args['coordinates'] = location
     return args
-    
+
+def get_job_by_id(id: str) -> dict:
+    client = pymongo.MongoClient(f"mongodb+srv://{username}:{password}@ekko-test-qbczn.mongodb.net/jobs?retryWrites=true&w=majority")
+    db = client.jobs 
+    try:
+        id_obj = objectid.ObjectId(id)
+    except:
+        raise HTTPException(description='That is invalid formatting for an ObjectID', response=400)
+    job = db.jobs.find_one({"_id": id_obj})
+    client.close()
+    if job is None:
+        raise HTTPException(description=f'No Job With ID {id} Was Found', response=200)
+    return json.loads(json_util.dumps(job))
+
 ## Testing Code
 if __name__ == '__main__':
+    pprint(get_job_by_id('5ee6a9555d9ac3f6168baf0e'))
     pprint(search({
         'distance': 50,
         'max_returns': 50,
