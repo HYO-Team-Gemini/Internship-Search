@@ -1,6 +1,6 @@
 import datetime
 import json
-import urllib.request
+from urllib import parse, request
 from pprint import pprint
 
 from bs4 import BeautifulSoup
@@ -23,7 +23,7 @@ def scrape(keywords, zip_code = None, num_pages = 10):
     for page_number in range(0, num_pages):
         url = base_url + str(page_number)
 
-        html = urllib.request.urlopen(url).read().decode("utf-8")
+        html = request.urlopen(url).read().decode("utf-8")
         soup = BeautifulSoup(html, features="html.parser")
 
         card_class = "job-result-card"
@@ -46,12 +46,6 @@ def scrape(keywords, zip_code = None, num_pages = 10):
 
                 name_tag, company_tag, metadata_tag = info_tag.contents
 
-                # get unique fields
-                # unique_fields = set()
-                # for md in metadata_tag.contents:
-                #     field = md.get("class")[0][17:]
-                #     unique_fields.add(field)
-
                 dic["name"] = name_tag.string
                 dic["employer"] = company_tag.string
 
@@ -61,7 +55,7 @@ def scrape(keywords, zip_code = None, num_pages = 10):
 
                 salary_info = metadata_tag.find_all(attrs={"class": card_prefix + "salary-info"})
                 if len(salary_info) == 1:
-                    dic["salary"] = salary_info[0].string
+                    dic["misc"]["salary"] = salary_info[0].string
 
                 time = metadata_tag.find_all('time')[0]
                 #dic["date"] = time.get("datetime")
@@ -74,9 +68,8 @@ def scrape(keywords, zip_code = None, num_pages = 10):
                 dic['date'] = datetime.datetime.utcnow()
 
                 jobs.append(dic)
-            except: 
-                print("Error With Job")
-                pprint(job_content)
+            except:
+                pass
     return jobs
 
 if __name__ == "__main__":
