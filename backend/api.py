@@ -40,10 +40,13 @@ class JobList(Resource):
         except HTTPException as e:
             abort(e.code, message=e.description)
         except Exception as e:
-            client = pymongo.MongoClient(f"mongodb+srv://{username}:{password}@ekko-test-qbczn.mongodb.net/jobs?retryWrites=true&w=majority")
-            client.errors.log.insert_one({'error': str(e), 'args': args, 'date': datetime.utcnow()})
-            client.close()
+            log_error(e, args)
             abort(500, message=f"Unexpected Server Error Occurred: {str(e)}")
+
+def log_error(error: Exception, args: dict={}):
+    client = pymongo.MongoClient(f"mongodb+srv://{username}:{password}@ekko-test-qbczn.mongodb.net/jobs?retryWrites=true&w=majority")
+    client.errors.log.insert_one({'error': str(error), 'args': args, 'date': datetime.utcnow()})
+    client.close()
 
 ##
 ## Actually setup the Api resource routing here
