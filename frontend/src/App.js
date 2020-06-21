@@ -12,6 +12,9 @@ function App() {
   const [employer, setEmployer] = useState("");
   const [postAge, setPostAge] = useState("");
   const [distance, setDistance] = useState("");
+  const [zipCode, setZipCode] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
   const [displayMessage, setDisplayMessage] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -73,25 +76,40 @@ function App() {
       <Container fluid className="search-bar">
         <Form className="search-form" onSubmit={handleSubmit}>
           <Form.Row>
-            <Form.Group as={Col} lg>
+            <Form.Group as={Col} lg={6}>
               <Form.Label>Keywords</Form.Label>
               <Form.Control type="text" value={name} onChange={e => setName(e.target.value)}
                             placeholder="Search by title or skill" />
             </Form.Group>
-            <Form.Group as={Col} lg>
+            <Form.Group as={Col} lg={6}>
                 <Form.Label>Employer</Form.Label>
                 <Form.Control type="text" value={employer} onChange={e => setEmployer(e.target.value)}
-                              placeholder="Example: Google" />
+                              placeholder="Ex: Google" />
             </Form.Group>
-            <Form.Group as={Col} lg>
-              <Form.Label>Post Age (in days)</Form.Label>
+            <Form.Group as={Col} lg={3}>
+              <Form.Label>Post Age (days ago)</Form.Label>
               <Form.Control type="number" value={postAge} onChange={e => setPostAge(e.target.value)}
-                            placeholder="Example: 4 days ago" />
+                            placeholder="Ex: 4 (days ago)" />
             </Form.Group>
-            <Form.Group as={Col} lg>
-              <Form.Label>Distance (radius)</Form.Label>
+            <Form.Group as={Col} lg={3}>
+              <Form.Label>Distance (radius in miles)</Form.Label>
               <Form.Control type="number" value={distance} onChange={e => setDistance(e.target.value)}
-                            placeholder="Example: 15 miles" />
+                            placeholder="Ex: 15 (miles)" />
+            </Form.Group>
+            <Form.Group as={Col} lg={1}>
+              <Form.Label>Zip Code</Form.Label>
+              <Form.Control type="number" value={zipCode} onChange={e => setZipCode(e.target.value)}
+                            placeholder="Ex: 73301" />
+            </Form.Group>
+            <Form.Group as={Col} lg={1}>
+              <Form.Label>City</Form.Label>
+              <Form.Control type="text" value={city} onChange={e => setCity(e.target.value)}
+                            placeholder="Ex: Austin" />
+            </Form.Group>
+            <Form.Group as={Col} lg={1}>
+              <Form.Label>State</Form.Label>
+              <Form.Control type="text" value={state} onChange={e => setState(e.target.value)}
+                            placeholder="Ex: Texas" />
             </Form.Group>
             <Form.Group as={Col} lg className="d-flex flex-column justify-content-end">
               <Button type="submit" value="Submit">Search</Button>
