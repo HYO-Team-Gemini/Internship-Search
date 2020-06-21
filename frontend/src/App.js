@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import values from 'lodash/values';
-import JobPosting from './components/JobPosting.js';
-import { Container, Col, Form, Button, Alert, Pagination } from 'react-bootstrap';
+import JobGrid from './components/JobGrid.js';
+import JobTable from './components/JobTable.js';
+import { Container, Row, Col, Form, Button, Alert, Pagination } from 'react-bootstrap';
 import './App.css';
 
 function App() {
@@ -14,12 +15,8 @@ function App() {
   const [displayMessage, setDisplayMessage] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
 
-  let pages = [];
-  for (let i = 1; i <= 5; i++) {
-    pages.push(
-      <Pagination.Item key={i} active={ currentPage === i } onClick={() => getPage(i)}>{i}</Pagination.Item>
-    );
-  }
+  // 0 is table view, 1 is card view
+  const [toggle, setToggle] = useState(0);
 
   const url = "https://gemini-jobs.herokuapp.com";
 
@@ -57,11 +54,18 @@ function App() {
     e.preventDefault();
     const pageNumber = 1;
     getData(pageNumber);
+    setCurrentPage(pageNumber);
   };
 
-  const getPage = (pageNumber) => {
+  const getPage = (pageChange) => {
+    const pageNumber = currentPage + pageChange;
     getData(pageNumber);
     setCurrentPage(pageNumber);
+  };
+
+  const handleToggleChange = () => {
+    const newToggleValue = toggle === 0 ? 1 : 0;
+    setToggle(newToggleValue);
   };
 
   return (
@@ -98,18 +102,41 @@ function App() {
       <Container fluid className="job-results">
         { displayMessage && <Alert variant="secondary" className="display-message">{displayMessage}</Alert>}
         { jobs.length > 0 &&
-            <div className="jobs-grid">
-              {jobs.map((job, i) => <div className="col"><JobPosting key={i} job={job} /></div>)}
+          <div className="results-toggle-row">
+            <div className="results-text float-left">
+              Results {(currentPage-1) * 50 + 1} - {(currentPage-1) * 50 + jobs.length}
             </div>
+            <div className="custom-control custom-switch float-right">
+              <label className="toggle-label" id="left-toggle-label" htmlFor="toggle">
+                Table View
+              </label>
+              <input
+                type="checkbox"
+                className="custom-control-input"
+                id="toggle"
+                checked={toggle}
+                onChange={handleToggleChange}
+                readOnly
+              />
+              <label className="custom-control-label toggle-label" id="right-toggle-label" htmlFor="toggle" >
+                Card View
+              </label>
+            </div>
+            <div class="clearfix"></div>
+          </div>
         }
+        { jobs.length > 0 && toggle === 0 && <JobTable jobs={jobs} /> }
+        { jobs.length > 0 && toggle === 1 && <JobGrid jobs={jobs} /> }
         { jobs.length > 0 &&
-            <Pagination className="pages-element">
-              <Pagination.First />
-              <Pagination.Prev />
-              {pages}
-              <Pagination.Next />
-              <Pagination.Last />
-            </Pagination>
+            <div className="pagination-row">
+              <Pagination className="pages-element float-left">
+                <Pagination.Prev onClick={() => getPage(-1)}/>
+              </Pagination>
+              <Pagination className="pages-element float-right">
+                <Pagination.Next onClick={() => getPage(1)}/>
+              </Pagination>
+              <div class="clearfix"></div>
+            </div>
         }
       </Container>
     </div>

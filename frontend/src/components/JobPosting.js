@@ -8,7 +8,7 @@ const JobPosting = (props) => {
     const job = props.job;
     const daysAgo = moment(job.date.toString()).fromNow();
     const date = moment(job.date).format("M/D/YY");
-    const location = job.city ? job.city : "" + job.state ? ", " + job.state : "";
+    const location = (job.city ? job.city : "") + (job.state ? ", " + job.state : "");
 
     return (
         <Card className="job-posting">
