@@ -3,6 +3,7 @@ from pprint import pprint
 
 import pymongo
 from uszipcode import SearchEngine, Zipcode
+from flask_restful import HTTPException
 
 if __name__ == "__main__":
     import extras, glassdoor, linkedin
@@ -12,8 +13,10 @@ else:
 credentials = json.load(open('backend/credentials.json'))
 username = credentials['MongoDB']['Username']
 password = credentials['MongoDB']['Password']
-client = pymongo.MongoClient(f"mongodb+srv://{username}:{password}@ekko-test-qbczn.mongodb.net/jobs?retryWrites=true&w=majority")
-db = client.jobs
+
+def get_mongo_client():
+    client = pymongo.MongoClient(f"mongodb+srv://{username}:{password}@ekko-test-qbczn.mongodb.net/jobs?retryWrites=true&w=majority")
+    return client
 
 search = SearchEngine(db_file_dir="backend/tmp")
 
@@ -24,18 +27,24 @@ def scrape_for_jobs(name: str, coordinates: list) -> list:
     return scrape_for_jobs(name, zipcode)
 
 def scrape_for_jobs(name: str, zipcode: str) -> list:
+    print(f'Starting Scrape For: {name} in {zipcode}')
     jobs = []
+    linkedin_failed = False
     try:
         jobs.extend(linkedin.scrape(name, zipcode))
     except:
-        pass
+        linkedin_failed = True
     try:
         jobs.extend(glassdoor.scrape(name, zipcode))
     except:
-        pass
+        if linkedin_failed:
+            raise HTTPException(description="Scraping for new data failed", response=500)
     return jobs
 
 def prune_jobs(jobs: list) -> list:
+    client = get_mongo_client()
+    db = client.jobs
+
     num_jobs = len(jobs)
     print(f'Pruning {str(num_jobs)} Jobs')
     extras.printProgressBar(0, num_jobs)
@@ -52,6 +61,7 @@ def prune_jobs(jobs: list) -> list:
         current_job += 1
         extras.printProgressBar(current_job, num_jobs)
     print(f"Prevented {num_jobs - len(pruned_jobs)} Duplicate Jobs By Pruning")
+    client.close()
     return pruned_jobs
 
 def prep_jobs(jobs: list) -> list:
@@ -74,8 +84,7 @@ def prep_jobs(jobs: list) -> list:
                 cities[job['city']] = location
             except:
                 issue = True
-                print("ISSUE WITH JOB")
-                pprint(job)
+                print(f"{job['city']}, {job['state']} was not found as a valid city/state pair")
         job['location'] = {
             'type': 'Point',
             'coordinates': location
@@ -87,6 +96,9 @@ def prep_jobs(jobs: list) -> list:
     return prepped_jobs
 
 def insert_jobs(jobs: list):
+    client = get_mongo_client()
+    db = client.jobs
+    num_total = db.count({})
     num_jobs = len(jobs)
     print(f'Inserting {str(num_jobs)} Jobs')
     extras.printProgressBar(0, num_jobs)
@@ -94,14 +106,12 @@ def insert_jobs(jobs: list):
     for job in jobs:
         try:
             db.jobs.insert_one(job)
-        except:
-            print(f'Error Occurred With Job {current_job + 1}')
+        except Exception as e:
+            print(f'Error Inserting Job {current_job + 1} Into Collection')
+            print(str(e))
         current_job += 1
         extras.printProgressBar(current_job, num_jobs)
-
-def refresh_job_data(num_queries: int = 20):
-    queries = list(db.queue.delete_many({}))
-    queries.append(list(db.queries.find({}).sort('date', pymongo.ASCENDING).limit(num_queries - queries.count)))
+    client.close()
 
 def perform_query(query: dict, skip_insert: bool = False) -> list:
     search_engine = SearchEngine(db_file_dir="backend/tmp")
