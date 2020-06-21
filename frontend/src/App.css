@@ -19,11 +19,29 @@
   margin-right: 2.75rem;
 }
 
-.custom-switch {
-  margin-left: auto;
-  margin-bottom: 0.5rem;
+.results-toggle-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+@media only screen and (max-width: 600px) {
+  .results-text {
+    flex-basis: 100%;
+  }
+  .custom-switch {
+    flex-basis: 100%;
+    padding-left: 0 !important;
+  }
+}
+
+.pagination-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 
 .pages-element {
   margin: 0.25rem 0rem;
 }
+

@@ -16,13 +16,13 @@ const JobTable = (props) => {
                 <td>{job.employer}</td>
                 <td>{location}</td>
                 <td>{date}</td>
-                <td><a class="external" href={job.link} target="_blank">Go</a></td>
+                <td><a className="external" href={job.link} target="_blank" rel="noopener noreferrer">Go</a></td>
             </tr>
         )
     });
 
     return (
-        <Table striped bordered hover variant="dark">
+        <Table responsive striped bordered hover variant="dark">
             <thead>
                 <tr>
                     <th>Name</th>

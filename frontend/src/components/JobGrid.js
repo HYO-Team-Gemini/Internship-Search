@@ -1,14 +1,15 @@
 import React from 'react';
-import JobPosting from './JobPosting.js';
+import JobPostingCard from './JobPostingCard.js';
+import CardDeck from 'react-bootstrap/CardDeck';
 import './JobGrid.css';
 
 const JobGrid = (props) => {
     const jobs = props.jobs;
 
     return (
-        <div className="jobs-grid">
-            {jobs.map((job, i) => <div className="col"><JobPosting key={i} job={job} /></div>)}
-        </div>
+        <CardDeck className="jobs-grid">
+            {jobs.map((job, i) => <JobPostingCard key={i} job={job} />)}
+        </CardDeck>
     );
 }
 
