@@ -10,7 +10,6 @@ function App() {
   const [jobs, setJobs] = useState([]);
   const [name, setName] = useState("");
   const [employer, setEmployer] = useState("");
-  const [postAge, setPostAge] = useState("");
   const [distance, setDistance] = useState("");
   const [zipCode, setZipCode] = useState("");
   const [city, setCity] = useState("");
@@ -20,17 +19,27 @@ function App() {
 
   // 0 is table view, 1 is card view
   const [toggle, setToggle] = useState(0);
+  
+  // "zipCode" is for zip code input, "cityState" is for city / state input
+  const [locationInput, setLocationInput] = useState("");
 
   const url = "https://gemini-jobs.herokuapp.com";
 
   const getData = (pageNumber) => {
-    const query = {
-      name: name.toLowerCase(),
+    let query = {
+      name,
       employer: employer.toLowerCase(),
-      post_age: postAge ? postAge : 0,
-      distance: distance ? distance : 0,
+      distance: distance ? parseInt(distance) : 0,
       page: pageNumber
     };
+
+    if (locationInput === "cityState") {
+      query["city"] = city;
+      query["state"] = state;
+    }
+    else if (locationInput === "zipCode") {
+      query["zipcode"] = zipCode ? parseInt(zipCode): 0;
+    }
 
     console.log(query);
 
@@ -71,6 +80,24 @@ function App() {
     setToggle(newToggleValue);
   };
 
+  const resetAllFields = () => {
+    setName("");
+    setEmployer("");
+    setDistance("");
+    setZipCode("");
+    setCity("");
+    setState("");
+    setLocationInput("");
+  };
+
+  const isSearchDisabled = () => {
+    if (city || state || zipCode || distance) {
+      if (locationInput === "cityState") return !(city && state && distance);
+      else if (locationInput === "zipCode") return !(zipCode && distance);
+    }
+    return false;
+  };
+
   return (
     <div className="App">
       <Container fluid className="search-bar">
@@ -87,32 +114,36 @@ function App() {
                               placeholder="Ex: Google" />
             </Form.Group>
             <Form.Group as={Col} lg={3}>
-              <Form.Label>Post Age (days ago)</Form.Label>
-              <Form.Control type="number" value={postAge} onChange={e => setPostAge(e.target.value)}
-                            placeholder="Ex: 4 (days ago)" />
+              <Form.Label>City</Form.Label>
+              <Form.Control type="text" value={city} 
+                            onChange={e => { setLocationInput("cityState"); setCity(e.target.value); }}
+                            placeholder="Ex: Austin" disabled={locationInput === "zipCode"} />
             </Form.Group>
             <Form.Group as={Col} lg={3}>
-              <Form.Label>Distance (radius in miles)</Form.Label>
+              <Form.Label>State</Form.Label>
+              <Form.Control type="text" value={state} 
+                            onChange={e => { setLocationInput("cityState"); setState(e.target.value); }}
+                            placeholder="Ex: Texas" disabled={locationInput === "zipCode"} />
+            </Form.Group>
+            <Form.Group as={Col} lg={2}>
+              <Form.Label>Zip Code</Form.Label>
+              <Form.Control type="number" value={zipCode} 
+                            onChange={e => { setLocationInput("zipCode"); setZipCode(e.target.value); }}
+                            placeholder="Ex: 73301" disabled={locationInput === "cityState"} />
+            </Form.Group>
+            <Form.Group as={Col} lg={2}>
+              <Form.Label>Distance (radius)</Form.Label>
               <Form.Control type="number" value={distance} onChange={e => setDistance(e.target.value)}
                             placeholder="Ex: 15 (miles)" />
             </Form.Group>
-            <Form.Group as={Col} lg={1}>
-              <Form.Label>Zip Code</Form.Label>
-              <Form.Control type="number" value={zipCode} onChange={e => setZipCode(e.target.value)}
-                            placeholder="Ex: 73301" />
-            </Form.Group>
-            <Form.Group as={Col} lg={1}>
-              <Form.Label>City</Form.Label>
-              <Form.Control type="text" value={city} onChange={e => setCity(e.target.value)}
-                            placeholder="Ex: Austin" />
-            </Form.Group>
-            <Form.Group as={Col} lg={1}>
-              <Form.Label>State</Form.Label>
-              <Form.Control type="text" value={state} onChange={e => setState(e.target.value)}
-                            placeholder="Ex: Texas" />
+            <Form.Group as={Col} lg className="d-flex flex-column justify-content-end">
+              <Button variant="outline-primary" onClick={() => resetAllFields()}>Clear</Button>
             </Form.Group>
             <Form.Group as={Col} lg className="d-flex flex-column justify-content-end">
-              <Button type="submit" value="Submit">Search</Button>
+              <Button type="submit" value="Submit"
+                      disabled={isSearchDisabled()}>
+                Search
+              </Button>
             </Form.Group>
           </Form.Row>
         </Form>
