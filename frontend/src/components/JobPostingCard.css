@@ -1,0 +1,9 @@
+.job-posting {
+    min-width: 18rem !important;
+    margin-bottom: 1rem !important;
+}
+
+.date-badge {
+    position: absolute;
+    right: 0.5rem;
+}

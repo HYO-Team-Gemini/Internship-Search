@@ -1,46 +1,47 @@
 .App {
   background-color: #282c34;
   min-height: 100vh;
-}
-
-.jobs-grid {
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  flex-flow: row wrap;
-}
-
-.jobs-grid .col {
-  flex-basis: 25%;
-}
-
-@media only screen and (max-width: 1250px) {
-  .jobs-grid .col {
-    flex-basis: 33%;
-  }
-}
-
-@media only screen and (max-width: 1000px) {
-  .jobs-grid .col {
-    flex-basis: 50%;
-  }
-}
-
-@media only screen and (max-width: 768px) {
-  /* For mobile phones: */
-  /* [class*="col-md-"] {
-    width: 100%;
-  } */
-
-  .jobs-grid .col {
-    flex-basis: 100%;
-  }
-}
-
-.search-form {
   padding: 1rem;
 }
 
-.form-label {
+.job-results {
+  padding-top: 1rem;
+  padding-bottom: 3rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label, .toggle-label, .results-text {
   color: white;
 }
+
+#left-toggle-label {
+  margin-right: 2.75rem;
+}
+
+.results-toggle-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+@media only screen and (max-width: 600px) {
+  .results-text {
+    flex-basis: 100%;
+  }
+  .custom-switch {
+    flex-basis: 100%;
+    padding-left: 0 !important;
+  }
+}
+
+.pagination-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.pages-element {
+  margin: 0.25rem 0rem;
+}
+
