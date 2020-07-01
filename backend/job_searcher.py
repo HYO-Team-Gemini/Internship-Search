@@ -33,35 +33,29 @@ def search(args: dict) -> dict:
     args = fill_missing_arguments(args)
     query_args = mongo_query_args(args)
     print(query_args)
+
+    remaining_items = args["max_returns"]
+
     cursor = db.jobs.find(query_args)
-    cursor.skip((args["page"] - 1) * args["max_returns"]).limit(args["max_returns"]).sort('date', pymongo.DESCENDING)
+    cursor.skip((args["page"] - 1) * args["max_returns"]).limit(remaining_items).sort('date', pymongo.DESCENDING)
 
     results = list(cursor)
+
+
     jobs = {}
     for job in results:
         job = sanitize_mongo_bson(job)
         jobs[str(len(jobs.keys()) + 1)] = job
-    if len(results) == 0 and args['page'] == 1 and args['zipcode'] != 0:
-        results = scrape_manager.perform_query(args)
-        cursor = db.jobs.find(query_args)
-        cursor.skip((args["page"] - 1) * args["max_returns"]).limit(args["max_returns"]).sort('date', pymongo.DESCENDING)
-        results = list(cursor)
-        jobs = {}
-        for job in results:
-            job = sanitize_mongo_bson(job)
-            jobs[str(len(jobs.keys()) + 1)] = job
 
     output = { 
         "num_jobs": len(results), 
         "jobs": jobs, 
         "num_pages": int(cursor.count() / args["max_returns"]) + 1
     }
+    
     print('Queried for:')
     pprint(args)
     args['date'] = datetime.utcnow()
-    remove_keys = [key for key in args.keys() if args[key] == '*']
-    for key in remove_keys:
-        args.pop(key)
             
     db.queries.insert_one(args)
     client.close()
@@ -72,6 +66,8 @@ def check_for_arg_issues(args: dict):
         raise HTTPException(description='Queried distance without specifying either zipcode or city/state pair', response=400)
     if args['max_returns'] == 0:
         raise HTTPException(description='Queried For No Returns', response=403)
+    if args['max_returns'] > 100:
+        raise HTTPException(description='This API will not return more than 100 entries at a time', response=403)
 
 def mongo_query_args(args: dict) -> dict:
     query_args = {}
@@ -93,18 +89,17 @@ def sanitize_mongo_bson(inputMongo: dict) -> dict:
     
     return json.loads(json_util.dumps(inputMongo))
 
-def build_location_query(args: dict) -> dict:
-    try:
-        return {
-            '$geoWithin': {
-                '$centerSphere': [
-                    args['coordinates'], 
-                    args['distance'] / 3963.2
-                ]
-            }
+def build_location_query(coordinates: list, max_distance: int, min_distance: int = 0) -> dict:
+    return {
+        '$near': {
+            '$geometry': {
+                'type': 'Point',
+                'coordinates': coordinates
+            },
+            '$maxDistance': max_distance * 1609,
+            '$minDistance': min_distance * 1609
         }
-    except:
-        raise HTTPException(description="Issue With Distance Query", response=500)
+    }
 
 def fill_missing_arguments(args: dict) -> dict:
     search_engine = SearchEngine(db_file_dir="backend/tmp")
@@ -112,11 +107,14 @@ def fill_missing_arguments(args: dict) -> dict:
         zipcode = search_engine.by_zipcode(args['zipcode'])
         location = [zipcode.lng, zipcode.lat]
         args['coordinates'] = location
+        args['state'] = zipcode.state
+        args['city'] = zipcode.city
     elif args['city'] != '*' and args['state'] != '*':
         zipcode = search_engine.by_city_and_state(args['city'], args['state'])[0]
         args['zipcode'] = zipcode.zipcode
         location = [zipcode.lng, zipcode.lat]
         args['coordinates'] = location
+        args['state'] = zipcode.state
     return args
 
 def get_job_by_id(id: str) -> dict:
