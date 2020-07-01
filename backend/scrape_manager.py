@@ -98,7 +98,6 @@ def prep_jobs(jobs: list) -> list:
 def insert_jobs(jobs: list):
     client = get_mongo_client()
     db = client.jobs
-    num_total = db.count({})
     num_jobs = len(jobs)
     print(f'Inserting {str(num_jobs)} Jobs')
     extras.printProgressBar(0, num_jobs)
@@ -111,6 +110,8 @@ def insert_jobs(jobs: list):
             print(str(e))
         current_job += 1
         extras.printProgressBar(current_job, num_jobs)
+    num_total = db.jobs.count({})
+    print(f'Database Now Has {num_total} Jobs')
     client.close()
 
 def perform_query(query: dict, skip_insert: bool = False) -> list:
@@ -133,3 +134,4 @@ def perform_queries(queries: list, skip_insert: bool = False):
 
 if __name__ == "__main__":
     perform_query({'name': 'programmer', 'zipcode': '33480'})
+
