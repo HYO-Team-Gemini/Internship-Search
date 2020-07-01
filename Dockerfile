@@ -10,5 +10,6 @@ RUN mkdir /backend
 
 ADD ./backend /backend
 ADD wsgi.py /wsgi.py
+ADD keep_awake.py /keep_awake.py
 
 ENTRYPOINT ["conda", "run", "-n", "hyo", "python", "wsgi.py"]
